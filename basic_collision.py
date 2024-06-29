@@ -46,7 +46,7 @@ dynamic_body = DynamicCircle(
     restitution=1,
 )
 
-static_line = StaticLine(
+static_line = __StaticLine(
     world,
     point_a=(10, 10),
     point_b=(SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10),
