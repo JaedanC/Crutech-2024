@@ -1,11 +1,11 @@
-import pygame
-from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE, K_a, K_d, K_w, K_s, KEYUP, K_q)
-pygame.color.Color
 import random
 from enum import Flag
 
 # See https://raw.githubusercontent.com/pybox2d/pybox2d/master/library/Box2D/examples/simple/simple_01.py
+import pygame
 import Box2D
+from pygame.locals import (QUIT, KEYDOWN, K_ESCAPE, K_a, K_d, K_w, K_s, KEYUP, K_q)
+
 from model import *
 from settings import *
 
@@ -13,7 +13,7 @@ from settings import *
 # Create the world
 world = Box2D.b2World(gravity=(0, -10), doSleep=True)
 
-kinematic_rect = KinematicRectangle(world, (100, 350), (200, 50),                                (100, 100, 250, 255))
+kinematic_rect = KinematicRectangle(world, (100, 350), (120, 50),                                (100, 100, 250, 255))
 dynamic_rect =   DynamicRectangle(  world, (200, 250), (25, 45), CollisionInfo(restitution=0.7), (100, 150, 150, 255))
 
 kinematic_circle = KinematicCircle(world, (370, 275), 25,                                 (50, 200, 250, 255))
@@ -22,20 +22,35 @@ dynamic_circle =   DynamicCircle(  world, (150, 250), 30, CollisionInfo(restitut
 
 kinematic_line = KinematicLine(world, (30, 20), (130, 100), (255, 90, 255, 255))
 
+octogon = [
+    (300, 80),
+    (320, 80),
+    (340, 100),
+    (340, 120),
+    (320, 140),
+    (300, 140),
+    (280, 120),
+    (280, 100),
+]
+kinematic_polygon = KinematicPolygon(world, octogon, (145, 100, 160, 255))
+
 game_objects = [
     StaticLine(world, (10,                10                ), (SCREEN_WIDTH - 10, 10                ), colour=(255, 150, 100, 255)),
     StaticLine(world, (SCREEN_WIDTH - 10, 10                ), (SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10), colour=(255, 150, 100, 255)),
     StaticLine(world, (SCREEN_WIDTH - 10, SCREEN_HEIGHT - 10), (10,                SCREEN_HEIGHT - 10), colour=(255, 150, 100, 255)),
     StaticLine(world, (10,                SCREEN_HEIGHT - 10), (10,                10                ), colour=(255, 150, 100, 255)),
-    DynamicLine(world, (10, 10), (100, 10), CollisionInfo(restitution=0.4), (255, 255, 90, 255)),
+    DynamicLine(world, (10, 10), (100, 10), CollisionInfo(restitution=1), (255, 255, 90, 255)),
     StaticCircle(   world, (320, 275), 25, (50, 255, 150, 255)).set_velocity(( 35, -45)),
     StaticRectangle(world, (230, 250), (25, 45), (100, 100, 150, 255)),
+    StaticPolygon(world, octogon,                   (45, 190, 100, 255)),
+    DynamicPolygon(world, octogon, CollisionInfo(), (45, 190, 100, 255)),
     dynamic_rect,
     kinematic_rect,
     kinematic_circle,
     dynamic_circle,
     kinematic_line,
     mouse_ball,
+    kinematic_polygon,
 ]
 
 
@@ -91,6 +106,7 @@ def main():
         kinematic_rect.set_velocity((left_right * 400, up_down * 400))
         kinematic_line.set_velocity((left_right * 400, up_down * 400))
         kinematic_circle.set_velocity((left_right * 400, up_down * 400))
+        kinematic_polygon.set_velocity((left_right * 400, up_down * 400))
         
         mouse_relo = (
             io.get_mouse_relative()[0] * TARGET_FPS,
